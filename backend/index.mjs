@@ -12,9 +12,13 @@ app.use(express.json());
 
 app.use("/api",routes);
 
-app.get("/", (req, res) => {
-	res.send("Hello World");
-})
+app.get('/', (req, res) => {
+	const date = new Date();
+	res.status(200).send({
+	  status: 200,
+	  message: 'The current date on server is: ' + date.toDateString(),
+  });
+  });
 
 const port = 3000;
 app.listen(port, () => {

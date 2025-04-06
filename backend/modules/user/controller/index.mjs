@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import Model from "../models/index.mjs";
 import {ENV} from "../../../constant/index.mjs";
-import JWT from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 import userSchema from "../schema/user.mjs";
 import chalk from "chalk";
 
@@ -12,7 +12,7 @@ const login = async (req, res) => {
     if (user) {
       const checkPassword = bcrypt.compareSync(password, user.password);
       if (checkPassword) {
-        var token = JWT.sign({ email: user.email },ENV.JWT_SECRET);
+        var token = jwt.sign({ email: user.email },ENV.JWT_SECRET);
       res.status(200).json({ status: 200, message: "Login Successfull", user, token });
       } else {
         res.status(401).json({ status: 401, message: "Incorrect Password" });
@@ -31,16 +31,17 @@ const createUser = async (req, res) => {
     return req.status(400).json({ message: "Bad request" });
   }
   try {
-    const user = await userSchema.validateAsync(req.body);
-    const password = await bcrypt.hash(user.password, 10);
-    const newUser = await Model.create({ ...user, password: password });
-
-    await newUser.save();
-
-    res.status(201).json({
-      message: "User created successfully",
-      user: { id: newUser.id, email: newUser.email },
-    });
+      const user = await userSchema.validateAsync(req.body);
+      const password = await bcrypt.hash(user.password, 10);
+      const newUser = await Model.create({ ...user, password: password });
+      const data = newUser.toObject();
+      await data.save();
+      var token = jwt.sign({ email: user.email }, ENV.JWT_SCRET);
+      res.status(201).json({
+        message: "User created successfully",
+        user: { id: data.id, email: data.email},
+        token,
+         });
   } catch (error) {
     if (error?.code === 11000) {
       return res.status(409).json({

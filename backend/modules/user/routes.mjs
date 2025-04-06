@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { createUser, getAllUsers, login, } from "./controller/index.mjs";
-// import tokenVerification from "../../Middleware/tokenVerification.mjs";
+import tokenVerification from "../../Middleware/tokenVerification.mjs";
 
 const router = Router();
 
-router.get("/", getAllUsers);
 router.post("/", createUser);
+router.get("/", tokenVerification,getAllUsers);
 // router.put("/user/:id", updateUser);
 // router.delete("/user/:id", deleteUser);
 router.post("/login", login);
