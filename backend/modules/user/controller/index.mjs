@@ -1,47 +1,24 @@
 import bcrypt from "bcrypt";
 import Model from "../models/index.mjs";
-import {ENV} from "../../../constant/index.mjs";
+import { ENV } from "../../../constant/index.mjs";
 import jwt from 'jsonwebtoken';
 import userSchema from "../schema/user.mjs";
 import chalk from "chalk";
 
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await Model.findOne({ email });
-    if (user) {
-      const checkPassword = bcrypt.compareSync(password, user.password);
-      if (checkPassword) {
-        var token = jwt.sign({ email: user.email },ENV.JWT_SECRET);
-      res.status(200).json({ status: 200, message: "Login Successfull", user, token });
-      } else {
-        res.status(401).json({ status: 401, message: "Incorrect Password" });
-      }
-    } else {
-      res.status(404).json({ status: 404, message: "User not found" });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({ error: err, status: 400 });
-  }
-};
+// ---------create user--------------
 const createUser = async (req, res) => {
   console.log(chalk.bgCyan("incoming call to signup api"));
   if (!req.body) {
-    return req.status(400).json({ message: "Bad request" });
+    return req.status(400).json({ message: "Bad request"});
   }
   try {
-      const user = await userSchema.validateAsync(req.body);
-      const password = await bcrypt.hash(user.password, 10);
-      const newUser = await Model.create({ ...user, password: password });
-      const data = newUser.toObject();
-      await data.save();
-      var token = jwt.sign({ email: user.email }, ENV.JWT_SCRET);
-      res.status(201).json({
-        message: "User created successfully",
-        user: { id: data.id, email: data.email},
-        token,
-         });
+    const user = await userSchema.validateAsync(req.body);
+    const password = await bcrypt.hash(user.password, 10);
+    const newUser = await Model.create({ ...user, password: password });
+    await newUser.save();
+    const data = newUser.toObject();
+    const token = jwt.sign({ email: user.email }, ENV.JWT_SCRET, { expiresIn: '1h' });
+    res.status(201).json({message: "User created successfully", user:data, token});
   } catch (error) {
     if (error?.code === 11000) {
       return res.status(409).json({
@@ -57,14 +34,83 @@ const createUser = async (req, res) => {
   }
 };
 
+// ---------get all users--------------
 const getAllUsers = async (req, res) => {
   try {
     const users = await Model.find();
-    res.json(users);
+    res.json(users)
   } catch (err) {
     res.status(400).json({ error: err, status: 400 });
   }
 };
+
+// -------delete user-----------
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Model.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ status: 404, message: "User not found" });
+    }
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(400).json({ error: err, status: 400 });
+  }
+};
+
+// -------------update user ----------------
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let user = await Model.findById(id);
+    if (!user) {
+      return res.status(404).json({ status: 404, message: "User not found" });
+    }
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, 10);
+    }
+    user = await Model.findByIdAndUpdate(id, req.body, { new: true });
+    res.status(200).json({ status: 200, message: "User updated successfully", user });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ status: 400, message: "Failed to update user", error: err });
+  }
+};
+
+
+// ---------login user--------------
+const login = async (req, res) => {
+  try{  
+    const {email,password} = req.body;
+    const user = await Model.findOne({email});
+    if(user){
+    const checkPassword = bcrypt.compareSync(password,user.password);
+    console.log(`password-->${password}   oldpassword-->${user.password}`);
+    if(checkPassword){
+        const token = jwt.sign({ email: user.email }, ENV.JWT_SCRET, { expiresIn: '1h' });
+        res.status(200).json({ status: 200, message: "Login Successfull", user, token });
+      } else {
+        res.status(401).json({ status: 401, message: "Incorrect Password" });
+      }
+    } else {
+      res.status(404).json({ status: 404, message: "User not found" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ error: err, status: 400 });
+  }
+};
+
+export {
+  login,
+  getAllUsers,
+  createUser,
+  deleteUser,
+  updateUser,
+};
+
+
+// -------------getLoggedInUser------------
 // const getLoggedInUser = async (req, res) => {
 //   try {
 
@@ -86,30 +132,6 @@ const getAllUsers = async (req, res) => {
 //     });
 //   }
 // };
-// const deleteUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     await User.findByIdAndDelete(id);
-//     res.json({ message: "User deleted successfully" });
-//   } catch (err) {
-//     res.status(400).json({ error: err, status: 400 });
-//   }
-// };
-// const updateUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const user = await Model.findByIdAndUpdate(id, req.body, { new: true });
-//     res.json({ message: "User updated successfully", user });
-//   } catch (err) {
-//     res.status(400).json({ error: err, status: 400 });
-//   }
-// };
-export {
-  login,
-  getAllUsers,
-  createUser,
-};
-
 // for admin
 
 // export const isAdmin = async (req, res) => {
