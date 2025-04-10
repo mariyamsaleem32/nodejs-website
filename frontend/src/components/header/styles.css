@@ -1,0 +1,196 @@
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==== Header Wrapper ==== */
+.header-wrapper {
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* ==== Top Strip ==== */
+.top-strip {
+  background-color: #f8f8f8;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 13px;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* ==== Header Main Area ==== */
+.header {
+  padding: 15px 0;
+}
+
+.row {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ==== Logo + Location ==== */
+.logo-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-location img {
+  max-height: 60px;
+  width: 80px;
+}
+
+/* ==== Location Button ==== */
+.countryDrop {
+  display: flex;
+  align-items: center;
+  background-color: #5cadef;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.countryDrop:hover {
+  background-color: #40a9ff;
+}
+
+.countryDrop .info {
+  margin-right: 10px;
+  line-height: 1.2;
+}
+
+.countryDrop .info span:first-child {
+  font-size: 11px;
+  color: #e0e0e0;
+}
+
+.countryDrop .info span:last-child {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.countryDrop .ml-auto {
+  font-size: 14px;
+}
+
+/* ==== Search Bar Full Width ==== */
+.search-wrapper {
+  flex: 1;
+  padding: 0 20px;
+}
+
+.header-search {
+  width: 100%;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  height: 50px;
+}
+
+.header-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 14px;
+  font-size: 16px;
+}
+
+.header-search button {
+  background: transparent;
+  border: none;
+  color: #555;
+  font-size: 18px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.header-search button:hover {
+  color: #1890ff;
+}
+
+/* ==== User & Cart ==== */
+.part-3 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.circle {
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  border: none;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: background-color 0.2s ease;
+}
+
+.circle:hover {
+  background-color: #e0e0e0;
+}
+
+.cartTab {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cartTab .price {
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 7px;
+}
+
+.cartTab .count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #f5222d;
+  color: white;
+  font-size: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 768px) {
+  .logo-location {
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .search-wrapper {
+    order: 3;
+    width: 100%;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  .part-3 {
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+
+  .header-search {
+    height: 45px;
+  }
+}
