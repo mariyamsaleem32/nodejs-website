@@ -113,8 +113,7 @@ export {
 // -------------getLoggedInUser------------
 // const getLoggedInUser = async (req, res) => {
 //   try {
-
-//     const {userId}= req.user
+//     const {id}= req.user
 //     // The tokenVerification middleware already decodes the token and attaches the user's email to `req.user`
 //     const user = await Model.findById(userId)
 
